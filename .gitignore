@@ -1,0 +1,11 @@
+# Ignore all image files (JPEG, PNG, GIF)
+*.jpg
+*.jpeg
+*.png
+*.gif
+
+# Ignore all CSV files
+*.csv
+
+# Ignore all PDF files
+*.pdf
