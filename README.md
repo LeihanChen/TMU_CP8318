@@ -1,4 +1,4 @@
-# TMU CPS8318
+# TMU CP8318
 This is the repo for the course CPS8318 at Toronto Metropolitan University.
 
 ## Assignment 1
