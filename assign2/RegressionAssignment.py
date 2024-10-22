@@ -206,9 +206,7 @@ plt.xticks(range(X.shape[1]), X.columns, rotation=45)
 plt.savefig("dry_bean_violin.png", dpi=300, bbox_inches="tight")
 plt.show()
 
-# Exclude some significant outliers in the dataset if any feature it is larger or smaller than 1.5 times the interquartile range, X is a multi-column dataframe
-# mask = (X - X.median()).abs() > 1.5 * (X.quantile(0.75) - X.quantile(0.25))
-# Exlude outliers if any feature is larger or smaller than 3 times the standard deviation
+# Exclude outliers if any feature is larger or smaller than 3 times the standard deviation
 mask = abs(X - X.mean(axis=0)) > 3 * X.std(axis=0)
 X = X[~mask.any(axis=1)]
 y = y[~mask.any(axis=1)]
@@ -221,14 +219,6 @@ sns.heatmap(X.corr(), annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Correlation Map of Dry Bean Features")
 plt.savefig("dry_bean_correlation.png", dpi=300, bbox_inches="tight")
 plt.show()
-
-# # According to the correlation map, there are some features that are highly correlated, so we can use PCA or LDA for dimensionality reduction
-# from sklearn.decomposition import PCA
-# pca = PCA(n_components=7)
-# # Fit the model with X and apply the dimensionality reduction on X
-# X = pca.fit_transform(X)
-# print(pca.explained_variance_ratio_)
-# print(pca.singular_values_)
 
 # LDA can also be used for dimensionality reduction
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
