@@ -1,11 +1,19 @@
-# Ignore all image files (JPEG, PNG, GIF)
-*.jpg
-*.jpeg
-*.png
-*.gif
-
 # Ignore all CSV files
 *.csv
 
 # Ignore all PDF files
 *.pdf
+
+# ignore Latex project files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.toc
+*.fdb_latexmk
+*.fls
