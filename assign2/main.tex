@@ -88,7 +88,7 @@ A stratified 5-fold cross-validation \cite{scikit-learn_cross_validation} is app
 Through 10 trials of 5-fold cross-validation, the average accuracy of the OvR classifier is 0.934, compared to 0.939 of the OvO classifier. 
 The visualization of the accuracy is shown in figure \ref{fig:dry_bean_accuracy} to demonstrates that the OvO classifier is steadily more accurate (+0.5\%) than the OvR classifier.
 
-The reason of the difference is that the OvO classifier can produce simpler decision boundaries for each pair of classes, which is beneficial for the linear logistic regression. 
+The reason of the difference is that the OvO\textit{} classifier can produce simpler decision boundaries for each pair of classes, which is beneficial for the linear logistic regression. 
 Another reason is that OvO can focus on a binary problem, avoiding the ambiguity that arises from distinguishing one class from many in OvR. 
 Moreover, the dataset is balanced after SMOTE, which is beneficial for OvO to avoid the bias towards the majority class.
 
