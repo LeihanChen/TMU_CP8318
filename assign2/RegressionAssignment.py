@@ -78,7 +78,8 @@ m = ['o', 'x']
 c = ['hotpink', '#88c999']
 fig = plt.figure()
 for i in range(len(data)):
-    plt.scatter(data['Score1'][i], data['Score2'][i], marker=data['y'][i], color = data['y'][i]) # 2 points
+    # Change the color assignment to use the predefined colors based on the class label
+    plt.scatter(data['Score1'][i], data['Score2'][i], marker=m[data['y'][i]], color=c[data['y'][i]]) # 2 points
 fig.canvas.draw()
 
 # Train a logistic regression classifier to predict the class labels y using the features X
@@ -94,7 +95,7 @@ m = ['o', 'x']
 c = ['red', 'blue'] #this time in red and blue
 fig = plt.figure()
 for i in range(len(data)):
-    plt.scatter(data['Score1'][i], data['Score2'][i], marker=y_pred[i], color = c[y_pred[i]])  # 2 points
+    plt.scatter(data['Score1'][i], data['Score2'][i], marker=m[y_pred[i]], color = c[y_pred[i]])  # 2 points
 fig.canvas.draw()
 # Notice that some of the training instances are not correctly classified. These are the training errors.
 
