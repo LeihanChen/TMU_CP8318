@@ -1,0 +1,52 @@
+\documentclass[12pt,a4paper]{article}
+
+% Package imports
+\usepackage[utf8]{inputenc}        % Allows UTF-8 input
+\usepackage{amsmath,amsfonts,amssymb} % For math symbols
+\usepackage{graphicx}               % For including graphics
+\usepackage{hyperref}               % For hyperlinks
+\usepackage{geometry}               % Set page dimensions
+\usepackage{fancyhdr}               % For custom headers/footers
+\usepackage{enumitem}               % For custom lists
+\usepackage{setspace}               % For line spacing
+\usepackage{titlesec}               % For section formatting
+\usepackage{booktabs}               % For nicer table formatting
+\usepackage{array}                  % For advanced table options
+\usepackage{subcaption}  % Add this to your preamble
+\usepackage[
+backend=biber,
+style=numeric,
+]{biblatex}                         % For bibliography
+\addbibresource{references.bib}     % Add bibliography file
+
+% Set the margins (adjust as needed)
+\geometry{
+    top=1in,
+    bottom=1in,
+    left=1in,
+    right=1in,
+}
+
+% Customizing the header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}             % Centered page number
+
+% Section title formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% Set line spacing
+\setstretch{1}
+
+% Title and author (can be customized as needed)
+\title{Backpropogation with Logistic Regression}
+\author{Leihan Chen}
+\date{\today}
+
+% Document starts here
+\begin{document}
+\maketitle
+\section{Question 1}
+
+\end{document}
