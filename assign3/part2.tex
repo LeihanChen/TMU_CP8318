@@ -48,5 +48,59 @@ style=numeric,
 \begin{document}
 \maketitle
 \section{Question 1}
+We use forward propagation to calculate the output of the network with an initial value. The output of the hidden layer is calculated as follows:
+\begin{align*}
+    h_1 &= sigmoid(i_1w_1 + i_2w_2 + b_{11} * 1) = 0.6682 \\
+    h_2 &= sigmoid(i_1w_1 + i_2w_2 + b_{11} * 1) = 0.6248 \\
+\end{align*}
+The output of the network can be sequentially calculated with the same way as follows:
+\begin{align*}
+    o_1 &= sigmoid(h_1w_5 + h_2w_6 + b_{21} * 1) = 0.3881 \\
+    o_2 &= sigmoid(h_1w_7 + h_2w_8 + b_{22} * 1) = 0.7519 \\
+\end{align*}
+So, the error can be calculated with $E_{total} = 0.5 * [{(o_1 - o1)}^2 + {(o_2 - o2)}^2] = 0.0998$.
 
+\section{Question 2}
+To calculate the gradient of the error concerning the weights, we can use the chain rule to calculate the gradient of the error with respect to the output of the network. The gradient of the error for the output of the network is calculated as follows:
+\begin{align*}
+    \frac{\partial E_{total}}{\partial w_5} &= \frac{\partial E_{total}}{\partial o_1}  \frac{\partial o_1}{\partial net_{o_1}}   \frac{\partial net_{o_1}}{\partial w_5} =  (o_1 - o1) * (o_1 * (1 - o_1)) * (h_1) = 0.0600\\
+    \frac{\partial E_{total}}{\partial w_7} &= \frac{\partial E_{total}}{\partial o_2}  \frac{\partial o_2}{\partial net_{o_2}}   \frac{\partial net_{o_2}}{\partial w_7} =  (o_2 - o2) * (o_2 * (1 - o_2)) * (h_1) = -0.0297\\
+    \frac{\partial E_{total}}{\partial w_6} &= \frac{\partial E_{total}}{\partial o_1}  \frac{\partial o_1}{\partial net_{o_1}}   \frac{\partial net_{o_1}}{\partial w_6} =  (o_1 - o1) * (o_1 * (1 - o_1)) * (h_2) = 0.0561\\
+    \frac{\partial E_{total}}{\partial w_8} &= \frac{\partial E_{total}}{\partial o_2}  \frac{\partial o_2}{\partial net_{o_2}}   \frac{\partial net_{o_2}}{\partial w_7} =  (o_2 - o2) * (o_2 * (1 - o_2)) * (h_2) = -0.0277\\
+    \frac{\partial E_{total}}{\partial b_{21}} &= \frac{\partial E_{total}}{\partial o_1}  \frac{\partial o_1}{\partial net_{o_1}}   \frac{\partial net_{o_1}}{\partial b_{21}} =  (o_2 - o2) * (o_2 * (1 - o_2)) * 1 = 0.0898\\
+    \frac{\partial E_{total}}{\partial b_{22}} &= \frac{\partial E_{total}}{\partial o_2}  \frac{\partial o_2}{\partial net_{o_2}}   \frac{\partial net_{o_2}}{\partial w_7} =  (o_2 - o2) * (o_2 * (1 - o_2)) * 1 = -0.0444\\
+\end{align*}
+Then, using the chain rule, we can get the derivatives of all weights in the first layer as follows:
+\begin{align*}
+	\frac{\partial E_{total}}{\partial w_1} & = \left(\frac{\partial E_{o_1}}{\partial h_1} + \frac{\partial E_{o_2}}{\partial h_1}\right)  \frac{\partial h_1}{\partial net_{h_1}} \frac{\partial net_{h_1}}{\partial w_1} \\ &= [(o_1 - o1) \cdot  (o_1  (1 - o_1)) \cdot  w_5 + (o_2 - o2) \cdot  (o_2  (1 - o_2)) \cdot  w_7] \cdot (h_1  (1 - h_1)) \cdot i_1 \\
+	&= -0.0113\\
+	\frac{\partial E_{total}}{\partial w_3} & = \left(\frac{\partial E_{o_1}}{\partial h_2} + \frac{\partial E_{o_2}}{\partial h_2}\right)  \frac{\partial h_2}{\partial net_{h_2}} \frac{\partial net_{h_2}}{\partial w_3} \\ &= [(o_1 - o1) \cdot  (o_1  (1 - o_1)) \cdot  w_6 + (o_2 - o2) \cdot  (o_2  (1 - o_2)) \cdot  w_8] \cdot (h_2  (1 - h_2)) \cdot i_1 \\
+	&= -0.0071 \\
+ 	\frac{\partial E_{total}}{\partial w_2} & = \left(\frac{\partial E_{o_1}}{\partial h_1} + \frac{\partial E_{o_2}}{\partial h_1}\right)  \frac{\partial h_1}{\partial net_{h_1}} \frac{\partial net_{h_1}}{\partial w_2} \\ &= [(o_1 - o1) \cdot  (o_1  (1 - o_1)) \cdot  w_5 + (o_2 - o2) \cdot  (o_2  (1 - o_2)) \cdot  w_7] \cdot (h_1  (1 - h_1)) \cdot i_2 \\
+	&= -0.0038 \\
+ 	\frac{\partial E_{total}}{\partial w_4} & = \left(\frac{\partial E_{o_1}}{\partial h_2} + \frac{\partial E_{o_2}}{\partial h_2}\right)  \frac{\partial h_2}{\partial net_{h_2}} \frac{\partial net_{h_2}}{\partial w_4} \\ &= [(o_1 - o1) \cdot  (o_1  (1 - o_1)) \cdot  w_6 + (o_2 - o2) \cdot  (o_2  (1 - o_2)) \cdot  w_8] \cdot (h_2  (1 - h_2)) \cdot i_2 \\
+	&= -0.0024 \\
+  	\frac{\partial E_{total}}{\partial b_{11}} & = \left(\frac{\partial E_{o_1}}{\partial h_1} + \frac{\partial E_{o_2}}{\partial h_1}\right)  \frac{\partial h_1}{\partial net_{h_1}} \frac{\partial net_{h_1}}{\partial b_{11}} \\ & = [(o_1 - o1) \cdot  (o_1  (1 - o_1)) \cdot  w_5 + (o_2 - o2) \cdot  (o_2  (1 - o_2)) \cdot  w_7] \cdot (h_1  (1 - h_1)) \cdot {1} \\
+	&= -0.0126 \\
+  	\frac{\partial E_{total}}{\partial b_{12}} & = \left(\frac{\partial E_{o_1}}{\partial h_2} + \frac{\partial E_{o_2}}{\partial h_2}\right)  \frac{\partial h_2}{\partial net_{h_2}} \frac{\partial net_{h_2}}{\partial b_{12}} \\ &= [(o_1 - o1) \cdot  (o_1  (1 - o_1)) \cdot  w_6 + (o_2 - o2) \cdot  (o_2  (1 - o_2)) \cdot  w_8] \cdot (h_2  (1 - h_2)) \cdot {1} \\
+	&= -0.0078 \\
+\end{align*}
+Therefore, the updated weights $\overline{w}$ using formula $\overline{w} = w - \alpha \cdot \frac{\partial E_{total}}{\partial w}$ are as follows:
+\begin{align*}
+\overline{w_1} = w_1 - \alpha \cdot \frac{\partial E_{total}}{\partial w_1} = 0.8057 \\
+\overline{w_3} = w_3 - \alpha \cdot \frac{\partial E_{total}}{\partial w_3} = -0.1965 \\
+\overline{w_2} = w_2 - \alpha \cdot \frac{\partial E_{total}}{\partial w_2} = -0.3981 \\
+\overline{w_4} = w_4 - \alpha \cdot \frac{\partial E_{total}}{\partial w_4} = 0.3012 \\
+\overline{b_{11}} = b_{11} - \alpha \cdot \frac{\partial E_{total}}{\partial b_{11}} = 0.1063 \\
+\overline{b_{12}} = b_{12} - \alpha \cdot \frac{\partial E_{total}}{\partial b_{12}} = 0.6039 \\
+\overline{w_5} = w_5 - \alpha \cdot \frac{\partial E_{total}}{\partial w_5} = -0.7300 \\
+\overline{w_7} = w_7 - \alpha \cdot \frac{\partial E_{total}}{\partial w_7} = 0.5148 \\
+\overline{w_6} = w_6 - \alpha \cdot \frac{\partial E_{total}}{\partial w_6} = -0.33281 \\
+\overline{w_8} = w_8 - \alpha \cdot \frac{\partial E_{total}}{\partial w_8} = 0.6139 \\
+\overline{b_{21}} = b_{21} - \alpha \cdot \frac{\partial E_{total}}{\partial b_{21}} = 0.1551 \\
+\overline{b_{22}} = b_{22} - \alpha \cdot \frac{\partial E_{total}}{\partial b_{22}} = 0.4222 
+\end{align*}
+
+\section{Question 3}
+Using the updated weight, the new error can be computed from the same procedure listed in Question1 (the computation procedure is ignored), the updated error $\overline{E_{total}} = 0.0906$
 \end{document}
