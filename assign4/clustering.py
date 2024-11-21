@@ -469,7 +469,7 @@ def main():
     min_samples = 5
     eps = determine_eps_value(x_num_pca, min_samples)
     print("Elbow eps value", eps)
-    eps_modifier = 1.35
+    eps_modifier = 1.2
     db = DBSCAN(eps=eps * eps_modifier, min_samples=min_samples, n_jobs=-1)
     agglomerative = AgglomerativeClustering(n_clusters=num_cluster, connectivity=None, linkage="ward", compute_distances=True)
 
