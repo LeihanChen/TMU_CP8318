@@ -483,13 +483,13 @@ def main():
     print(82 * "_")
 
     # Visualize the clustering results with KMeans
-    # visualize_kmeans(x_num_pca, kmeans)
+    visualize_kmeans(x_num_pca, kmeans)
     
     # Visualize the clustering results with DBSCAN
-    # visualize_dbscan(x_num_pca, db)
+    visualize_dbscan(x_num_pca, db)
    
     # Visualize the dendrogram of the agglomerative clustering
-    # visualize_dendrogram(agglomerative, truncate_mode='level', p=3)
+    visualize_dendrogram(agglomerative, truncate_mode='level', p=3)
     
     # Visualize the clustering results
     algorithms = [
