@@ -62,14 +62,10 @@ def data_preprocessing(X, y):
     
     # Using QuantileTransformer to normalize the data
     x_num_complete = QuantileTransformer(n_quantiles=50, random_state=0).fit_transform(x_num_complete)
-   
-    # Normalize all features using standard scaler
-    non_categorical_feature = RobustScaler().fit_transform(x_num_complete)
-
-    
+       
     # The feature is redundant and correlated, so we can use PCA to reduce the dimensionality
     pca = PCA(n_components=0.75)
-    x_num_pca = pca.fit_transform(non_categorical_feature)
+    x_num_pca = pca.fit_transform(x_num_complete)
     x_num_pca_norm = RobustScaler().fit_transform(x_num_pca)
     print("Number of numerical features after PCA", x_num_pca.shape[1])
     
@@ -140,7 +136,6 @@ def bench_clustering_algorithm(algorithm, name, data, labels):
     results += [m(labels, estimator.labels_) for m in clustering_metrics]
 
     # The silhouette score requires the full dataset
-    print(set(estimator.labels_))
     num_label = len(set(estimator.labels_)) if -1 not in set(estimator.labels_) else len(set(estimator.labels_)) - 1
     results += [
         metrics.silhouette_score(
@@ -242,6 +237,8 @@ def visualize_kmeans(data, kmeans):
     plt.xticks(())
     plt.yticks(())
     plt.show()
+    
+    # Return back to the original data
     kmeans.fit(data)
     
 def visualize_dendrogram(model, **kwargs):

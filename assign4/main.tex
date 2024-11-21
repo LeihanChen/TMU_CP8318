@@ -37,10 +37,10 @@ style=ieee,
 \titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
 
 % Set line spacing
-\setstretch{2}
+\setstretch{1}
 
 % Title and author (can be customized as needed)
-\title{Logistic Regression Classification on Dry Bean Dataset}
+\title{Clustering Agorithm on Mice Protein Dataset}
 \author{Leihan Chen}
 \date{\today}
 
@@ -50,87 +50,123 @@ style=ieee,
 % \maketitle
 
 % Introduction section
-\section{Introduction}
-The report mainly addresses the task to apply a logistic regression classifier \cite{scikit-learn_LogisticRegression} to Dry Bean dataset \cite{dry_bean_602}. 
+\section{Background}
+Mice Protein Expression dataset is a multi-class classification/clusteirng dataset. 
+The dataset consists of 77 proteins/protein modifications of expression level that produced detectable signals in the nuclear fraction of cortex \cite{mice_protein_expression_342}. 
+Two types of mice, control (38) and trisomic (34), were used in the experiment. 15 Measurements were taken for each protein across each sample. Therefore, the dataset contains 1080 instances per protein \cite{Higuera2015SelfOrganizingFM}.
+The eight classes of mice are then described based on three categorical features genotype, behavior and treatment. In summary, the dataset contains 1080 instances with 77 different protein modifications (features) with 8 types of mice.
 
-Section \ref{sec:dataset} provides a description of Dry Bean dataset. 
-Section \ref{sec:methodology} describes the analysis and pre-processing of the dataset, 
-as well as the setting of logistic regression classifier in a cross validation evaluation within OneVsOne (OvO) and OneVsAll (OvR) configuration. 
-Section \ref{sec:results} presents the results of the classifier. Finally, Section \ref{sec:conclusion} concludes the report. 
+The data is obtained from the UCI Machine Learning Repository \cite{mice_protein_expression_342}. This dataset can be applied as both a multi-class classification and clustering problem. In this report, the dataset is treated as a clustering problem. 
+The goal is to cluster the mice samples based on the protein expression levels. This dataset is challenging due to the high dimensionality. 
+Meanwhile, the number of instances is relatively small, which is suitable for some clustering algorithms such as Hierarical Clustering. A visualization of the dataset (featrures are reduced to 2 for visualization purpose) is shown in the subfigure of figure \ref{fig:comparison_clustering}.
 
-
-% Dataset section
-\section{Dataset}\label{sec:dataset}
-Dry Bean dataset is a multi-class classification dataset. Total 13,611 grains of 7 different types of dry beans were taken with a high-resolution camera \cite{dry_bean_602}. In total with 16 features, 12 dimension features plus 4 shape forms. 
-
-A visualization of label distribution is shown in figure \ref{fig:label_distribution}. It is clearly observed that the class is imbalanced, with the largest class being with 3546 instances while the smallest only contains 522 instances.
-Moreover, figure \ref{fig:dry_bean_violin} shows the violin plot of each feature (all features are normalized for visualization convenience). 
-The figure demonstrates that the dimensional features are approximately normally distributed while the shape features are opposite. Meanwhile, some features such as Solidity, ConvexArea, and AxisLength have some significant outliers.
+% A visualization of label distribution is shown in figure \ref{fig:label_distribution}. It is clearly observed that the class is imbalanced, with the largest class being with 3546 instances while the smallest only contains 522 instances.
+% Moreover, figure \ref{fig:dry_bean_violin} shows the violin plot of each feature (all features are normalized for visualization convenience). 
+% The figure demonstrates that the dimensional features are approximately normally distributed while the shape features are opposite. Meanwhile, some features such as Solidity, ConvexArea, and AxisLength have some significant outliers.
 
 % Methodology section
-\section{Methodology}\label{sec:methodology}
+\section{Methods}\label{sec:methods}
 \subsection{Pre-processing}\label{subsec:preprocessing}
-From the violin plot, it is natural to remove the outliers in the dataset. A simple outlier detection method is applied by removing the instances with any feature value not within 3 standard deviations.
-Through the removal, there are 12,487 instances left in the dataset. Then, a standard scalar normalization is applied to the dataset to align feature values to a similar scale, which are significant for logistic regression to avoid the dominance of large values.
+It is noticed that the dataset has missing values in many features. Therefore, the missing values are imputed with K Nearest Neighbors (KNN) imputer \cite{scikit-learn_KNNImputer}. 
+After imputation, a QuantileTransformer \cite{scikit-learn_QuantileTransformer} is applied to the dataset to normalize the features. 
+The motivation for using QuantileTransformer is that it can transform the features to follow a uniform or normal distribution, 
+which contributes to equal weight for distance-based clustering algorithms, and avoid the effect of some extreme outliers too.
 
-Later, from the figure \ref{fig:feature_correlation} of feature correlation, many feature pairs such as Area&Perimeter, MajorAxisLength&ConvexArea with high correlation are observed. It is indicated that the dataset may contain multicollinearity and features are highly redundant. 
-Therefore, a Linear Discriminant Analysis (LDA) is applied to the dataset to reduce the feature dimensions considering LDA can maximize the linear separability of the classes, which are beneficial for Logistic Regression classifier. After the reduction, the dataset contains only 6 features.
+After the quantile transformation with uniform output distribution, the features are reduced with Principal Component Analysis (PCA) \cite{MACKIEWICZ1993303} to reduce the dimensionality. 
+This is useful to decorrelate the features and reduce the computatioanl complexity of the clustering algorithms. Here, the PCA algorithm will only keep the first several principal components to retain 75\% of the variance. 
+Finally, a robust scaler \cite{scikit-learn_RobustScaler} is applied to the dataset to standardize the features.
 
-Finally, to mitigate the class imbalance, a Synthetic Minority Over-sampling Technique (SMOTE) \cite{chawla2002smote} is applied to the dataset to generate synthetic instances for the minority classes. 
-Through this data augmentation, the dataset is balanced with 24,640 instances in total.
-\subsection{Logistic Regression Classifier}\label{subsec:classifier}
-Both OvO \cite{scikit-learn_OneVsRestClassifier} and OvR \cite{scikit-learn_OneVsOneClassifier} strategies are applied to extend logistic regression classifier for multi-class classification. 
-The logistic regression classifier is set with a 'lbfgs' solver with a maximum iteration of 1000. The regularization parameter C is set to 1.0. 
-A stratified 5-fold cross-validation \cite{scikit-learn_cross_validation} is applied to evaluate the performance.
+\subsection{Clustering Algorithms}\label{subsec:clustering}
+Three clusteirng algorithms are applied to the pre-processed dataset, including KMeans, DBSCAN and Agglomerative Clustering. 
+With the setting of KMeans, the number of clusters is set to 8, which is the number of classes in the dataset. Considering the complexity of the dataset, we initial cluster centroids using sampling based on an empirical probability distribution of the points' contribution to the overall inertia. 
+Moreover, fix number of times the k-means algorithm is run with different centroid seeds is set to 10.
+
+For DBSCAN, to determine the optimal hyperparameters, We use the elbow method to find the optimal value of epsilon. Specifically, the K-distance graph is computed to find the elbow point with a proposed method \cite{Kdistance} in 2011. 
+The minimum number of samples is empirically set to 5. Also, we set an additonal eps modifier to adjust epilson values if needed.
+
+Regarding the setting of Agglomerative Clustering, the linkage is set to 'ward' to minimize the variance of the clusters being merged. Also, the number of clusters is set to 8.
+
+\subsection{Evaluation}\label{subsec:evaluation}
+The perfromance of the above-menioned clustering algorithms is evaluated with different metric \cite{scikit-learn_clustering}. 
+With the given ground truth labels, homogeneous score and completeness score are evaluated to reflect the purity of the given cluster, and given class, respectively.
+Moreover, the V-measure score is calculated to reflect the harmonic mean of homogeneity and completeness. 
+Additionally, the adjusted rand index and adjusted mutual information are computed to reflect the similarity between the true labels and the predicted labels. 
+Another common metric, silhouette score, is also utilized to reflect the compactness of the clusters. 
+Lastly, Separation (SSB) and coherence (SSE) are specifically targeted for KMeans to evaluate the inter-cluster and intra-cluster sum of squares, respectively.
+
+
 
 % Results section
 \section{Results}\label{sec:results}
-Through 10 trials of 5-fold cross-validation, the average accuracy of the OvR classifier is 0.934, compared to 0.939 of the OvO classifier. 
-The visualization of the accuracy is shown in figure \ref{fig:dry_bean_accuracy} to demonstrates that the OvO classifier is steadily more accurate (+0.5\%) than the OvR classifier.
+The metrics of three clustering algorithms are represented in table \ref{tab:clustering_results}.
 
-The reason of the difference is that the OvO\textit{} classifier can produce simpler decision boundaries for each pair of classes, which is beneficial for the linear logistic regression. 
-Another reason is that OvO can focus on a binary problem, avoiding the ambiguity that arises from distinguishing one class from many in OvR. 
-Moreover, the dataset is balanced after SMOTE, which is beneficial for OvO to avoid the bias towards the majority class.
+The visualization of three clustering algorithms can be found in figure \ref{fig:clustering_visualization}. The subfigure \ref{fig:kmeans_visualization} shows the clustering result of KMeans, applied on a two-dimensional PCA-reduced dataset. 
+The subfigure \ref{fig:dbscan_visualization} shows the clustering result of DBSCAN, and the subfigure \ref{fig:dendrogram_distribution} shows the dendrogram of Agglomerative Clustering.
+
+The direct comparison of three clustering algorithms is shown in figure \ref{fig:comparison_clustering}.
 
 \section{Conclusion}\label{sec:conclusion}
-To conclude, a logistic regression classifier is applied to Dry Bean dataset with OvR and OvO strategies. The final accuracy achieves 0.939 with OvO, which is higher than 0.934 with OvR, which shows the superiority of OvO in multi-class classification.
+To conclude, three different clustering algorithms are applied to challenging Mice Protein Expression dataset. 
+The KMeans and Agglomerative Clustering algorithms achieves similar relatively good perfromance, while DBSCAN fails to cluster the dataset accurately. 
+It is also observed that DBSCAN is sensitive to the hyperparameters, and the elbow method is not always applicable to find the optimal hyperparameters.
 
 % References section
 \printbibliography
 
+
+% Appendix section for all tables and figures
 \section{Appendix}\label{sec:appendix}
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
-    \begin{subfigure}{0.48\textwidth}
+    \begin{subfigure}{0.33\textwidth}
         \centering
         % set two figures height identical
-        \includegraphics[width=\linewidth, height=4cm]{figures/dry_bean_class_distribution.png}
-        \caption{Dry Bean label distribution}
-        \label{fig:label_distribution}
+        \includegraphics[width=\linewidth, height=4cm]{figures/kmeans_vis.png}
+        \caption{KMeans clustering}
+        \label{fig:kmeans_visualization}
     \end{subfigure}
+
     \hfill
-    \begin{subfigure}{0.48\textwidth}
+    \begin{subfigure}{0.33\textwidth}
         \centering
-        \includegraphics[width=\linewidth, height=4cm]{figures/dry_bean_violin.png}
-        \caption{Violin plot of Dry Bean features}
-        \label{fig:dry_bean_violin}
+        \includegraphics[width=\linewidth, height=4cm]{figures/dbscan_vis.png}
+        \caption{DBScan clustering}
+        \label{fig:dbscan_visualization}
     \end{subfigure}
-    \caption{Feature distribution of Dry Bean dataset}
-    \label{fig:iris_features}
+    
+    \hfill
+    \begin{subfigure}{0.33\textwidth}
+        \centering
+        % set two figures height identical
+        \includegraphics[width=\linewidth, height=4cm]{figures/dendrogram_vis.png}
+        \caption{Dendrogram of Agglomerative Clustering}
+        \label{fig:dendrogram_distribution}
+    \end{subfigure}
+    \caption{Visualization of three clustering algorithms}
+    \label{fig:clustering_visualization}
 \end{figure}
+
+% A table to show the clustering results on different metrics
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{lccccccccc}
+        \toprule
+        \textbf{Algorithm} & \textbf{Time} & \textbf{Separation} & \textbf{Cohesion} & \textbf{Homogeneity} & \textbf{Completeness} & \textbf{V-measure} & \textbf{ARI} & \textbf{AMI} & \textbf{Silhouette Score} \\
+        \midrule
+        KMeans & 0.00 & 1.00 & 0.00 & 0.65 & 0.65 & 0.65 & 0.45 & 0.64 & 0.35 \\
+        DBSCAN & 0.00 & 1.00 & 0.00 & 0.00 & 1.00 & 0.00 & 0.00 & 0.00 & 0.00 \\
+        Agglomerative & 0.00 & 1.00 & 0.00 & 0.65 & 0.65 & 0.65 & 0.45 & 0.64 & 0.35 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Clustering results on different metrics}
+    \label{tab:clustering_results}
+\end{table}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/dry_bean_correlation.png}
-    \caption{Feature correlation of Dry Bean dataset}
-    \label{fig:feature_correlation}
-\end{figure}
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/dry_bean_ovo_ovr_accuracy.png}
-    \caption{Accuracy of Dry Bean dataset with OvO and OvR}
-    \label{fig:dry_bean_accuracy}
+    \includegraphics[width=0.8\textwidth]{figures/clustering_result_comparison.png}
+    \caption{The comparison of clustering algorithms (features are reduced to two dimensions for visualization purpose)}
+    \label{fig:comparison_clustering}
 \end{figure}
 
 \end{document}
