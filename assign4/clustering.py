@@ -463,7 +463,7 @@ def main():
     num_cluster = len(set(y_num))
     
     # Generate different clustering algorithms
-    kmeans = KMeans(init="k-means++", n_clusters=num_cluster, n_init=10)
+    kmeans = KMeans(init="k-means++", n_clusters=num_cluster, n_init=10, random_state=0)
     
     # Determine eps value
     min_samples = 5
