@@ -1,5 +1,5 @@
 # TMU CP8318
-This is the repo for the course CPS8318 at Toronto Metropolitan University.
+This is the repo for the course CP8318 at Toronto Metropolitan University during Fall2024.
 
 ## Assignment 1
 **Decision Tree Classifier**
